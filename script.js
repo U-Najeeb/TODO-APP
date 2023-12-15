@@ -29,15 +29,16 @@ const updateUI = (todos) => {
   // const todoText = document.querySelector(".todo--data");
   // const todoRows = document.querySelectorAll(".todo--row");
   // const allButtons = document.querySelectorAll(".buttons");
-
+  methods()
+};
+const methods = () => {
   container.addEventListener("click", (e) => {
     e.preventDefault();
     if (e.target.classList.contains("done")) {
-      // e.preventDefault()
       const element = e.target.closest(".todo--row");
       element.firstElementChild.style.textDecoration = "line-through";
-    } else if (e.target.classList.contains("delete")) {
-      // e.preventDefault()
+    }
+    if (e.target.classList.contains("delete")) {
       const element = e.target.closest(".todo--row");
       const deleteText = element.firstElementChild.textContent;
       const newData = JSON.parse(localStorage.getItem("data"));
@@ -45,12 +46,13 @@ const updateUI = (todos) => {
       if (index > -1) {
         newData.splice(index, 1);
       }
+      todos = newData
 
-      localStorage.setItem("data", JSON.stringify(newData));
-      if (newData.length === 0) {
+      localStorage.setItem("data", JSON.stringify(todos));
+      if (todos.length === 0) {
         localStorage.removeItem("data");
       }
-      updateUI(newData);
+      updateUI(todos);
     }
   });
 };

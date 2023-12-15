@@ -38,6 +38,7 @@ const methods = () => {
       if (task) {
         task.completed = true;
         tickedEle.style.textDecoration = "line-through";
+        localStorage.setItem("data", JSON.stringify(data))
       }
     }
 

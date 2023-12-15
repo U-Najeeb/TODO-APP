@@ -22,13 +22,13 @@ const updateUI = (todos) => {
     container.appendChild(todoElement);
     todoElement.classList.add(`todo--row`, "active", `todo--row-${i}`);
   });
-  const todoDone = document.querySelector(".done");
-  const todoDelete = document.querySelector(".delete");
-  const todoEdit = document.querySelector(".edit");
-  const buttonBox = document.querySelector(".button--box");
-  const todoText = document.querySelector(".todo--data");
-  const todoRows = document.querySelectorAll(".todo--row");
-  const allButtons = document.querySelectorAll(".buttons");
+  // const todoDone = document.querySelector(".done");
+  // const todoDelete = document.querySelector(".delete");
+  // const todoEdit = document.querySelector(".edit");
+  // const buttonBox = document.querySelector(".button--box");
+  // const todoText = document.querySelector(".todo--data");
+  // const todoRows = document.querySelectorAll(".todo--row");
+  // const allButtons = document.querySelectorAll(".buttons");
 
   container.addEventListener("click", (e) => {
     e.preventDefault();

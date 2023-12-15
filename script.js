@@ -9,8 +9,8 @@ const updateUI = (todos) => {
   todos.forEach((todo, i) => {
     const html = `
       <input type="text" name="data" class="todo-text" value="${todo.text}" ${
-        todo.completed ? 'style="text-decoration: line-through;"' : ''
-      } disabled>
+      todo.completed ? 'style="text-decoration: line-through;"' : ""
+    } disabled>
       <div class="button--box">
         <button class="done buttons">✅</button>
         <button class="delete buttons">❌</button>
@@ -31,7 +31,7 @@ const methods = () => {
 
     if (e.target.classList.contains("done")) {
       const element = e.target.closest(".todo--row");
-      const tickedEle = element.firstElementChild
+      const tickedEle = element.firstElementChild;
       const taskId = element.getAttribute("task-no");
       const data = JSON.parse(localStorage.getItem("data"));
       const task = data.find((task) => task.id === taskId);
@@ -44,16 +44,30 @@ const methods = () => {
     if (e.target.classList.contains("delete")) {
       const element = e.target.closest(".todo--row");
       const taskId = element.getAttribute("task-no");
-      const data = JSON.parse(localStorage.getItem("data"));
       todos = todos.filter((todo) => todo.id !== taskId);
       localStorage.setItem("data", JSON.stringify(todos));
-      if(todos.length === 0){
-        localStorage.removeItem("data")
+      if (todos.length === 0) {
+        localStorage.removeItem("data");
       }
       updateUI(todos);
     }
+
     if (e.target.classList.contains("edit")) {
-      console.log(e.target);
+      const element = e.target.closest(".todo--row");
+      const editElement = element.querySelector(".todo-text");
+      const taskId = element.getAttribute("task-no");
+      const data = JSON.parse(localStorage.getItem("data"));
+      const task = data.find((task) => task.id === taskId);
+      if (task) {
+        editElement.value = " ";
+        editElement.removeAttribute("disabled");
+        editElement.focus();
+        editElement.addEventListener("blur", () => {
+          task.text = editElement.value.trim();
+          localStorage.setItem("data", JSON.stringify(data));
+          updateUI(data);
+        });
+      }
     }
   });
 };
@@ -73,7 +87,7 @@ form.addEventListener("submit", (e) => {
     alert("No TODO");
   } else {
     const taskId = Math.trunc(Date.now() + Math.random()).toString();
-    const newTodo = { id: taskId, text: todoData.trim(), completed: false  };
+    const newTodo = { id: taskId, text: todoData.trim(), completed: false };
     todos.push(newTodo);
     localStorage.setItem("data", JSON.stringify(todos));
     updateUI(todos);

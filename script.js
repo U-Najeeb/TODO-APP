@@ -9,9 +9,9 @@ let todos = [];
 /////UI UPDATION
 const updateUI = (todos) => {
   container.innerHTML = " ";
-  todos.forEach((todo, i) => {
+  todos.forEach((todo) => {
     const html = `
-    <p class="todo--data">${todo}</p>
+    <p class="todo--data">${todo.text}</p>
     <div class="button--box">
     <button class="done buttons">✅</button>
     <button class="delete buttons">❌</button>
@@ -20,39 +20,33 @@ const updateUI = (todos) => {
     const todoElement = document.createElement("div");
     todoElement.innerHTML = html;
     container.appendChild(todoElement);
-    todoElement.classList.add(`todo--row`, "active", `todo--row-${i}`);
+    todoElement.classList.add(`todo--row`, "active", `todo--row-${todo.id}`);
+    todoElement.setAttribute("data-taskNo", todo.id);
   });
-  // const todoDone = document.querySelector(".done");
-  // const todoDelete = document.querySelector(".delete");
-  // const todoEdit = document.querySelector(".edit");
-  // const buttonBox = document.querySelector(".button--box");
-  // const todoText = document.querySelector(".todo--data");
-  // const todoRows = document.querySelectorAll(".todo--row");
-  // const allButtons = document.querySelectorAll(".buttons");
-  methods()
+  methods();
 };
+
 const methods = () => {
   container.addEventListener("click", (e) => {
     e.preventDefault();
+    const taskId = e.target.closest(".todo--row").getAttribute("data-taskNo");
     if (e.target.classList.contains("done")) {
       const element = e.target.closest(".todo--row");
       element.firstElementChild.style.textDecoration = "line-through";
     }
     if (e.target.classList.contains("delete")) {
-      const element = e.target.closest(".todo--row");
-      const deleteText = element.firstElementChild.textContent;
-      const newData = JSON.parse(localStorage.getItem("data"));
-      const index = newData.indexOf(deleteText);
-      if (index > -1) {
-        newData.splice(index, 1);
-      }
-      todos = newData
-
-      localStorage.setItem("data", JSON.stringify(todos));
-      if (todos.length === 0) {
-        localStorage.removeItem("data");
-      }
+      todos = todos.filter((todo) => todo.id !== taskId);
+      localStorage.setItem("data", todos)
       updateUI(todos);
+    }
+    if (e.target.classList.contains("edit")) {
+      console.log(e.target);
+      todoInput.focus();
+      let newValue = todoInput.value;
+      todos = todos.map((todo) =>
+        todo.id === taskId ? { ...todo, text: newValue } : todo
+      );
+      localStorage.setItem("data", JSON.stringify(todos));
     }
   });
 };
@@ -73,7 +67,9 @@ form.addEventListener("submit", (e) => {
   if (!todoData) {
     alert("No TODO");
   } else {
-    todos.push(todoData.trim());
+    const taskId = Date.now().toString(); // Generate a unique identifier
+    const newTodo = { id: taskId, text: todoData.trim(), completed : false};
+    todos.push(newTodo);
     localStorage.setItem("data", JSON.stringify(todos));
     updateUI(todos);
     todoInput.value = " ";

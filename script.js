@@ -8,7 +8,9 @@ const updateUI = (todos) => {
   container.innerHTML = "";
   todos.forEach((todo, i) => {
     const html = `
-      <input type="text" name="data" class="todo-text" value="${todo.text}" disabled>
+      <input type="text" name="data" class="todo-text" value="${todo.text}" ${
+        todo.completed ? 'style="text-decoration: line-through;"' : ''
+      } disabled>
       <div class="button--box">
         <button class="done buttons">✅</button>
         <button class="delete buttons">❌</button>
@@ -33,14 +35,9 @@ const methods = () => {
       const taskId = element.getAttribute("task-no");
       const data = JSON.parse(localStorage.getItem("data"));
       const task = data.find((task) => task.id === taskId);
-      console.log(task)
       if (task) {
-        tickedEle.style.textDecoration = "line-through";
         task.completed = true;
-        if(task.completed){
-          tickedEle.style.textDecoration = "line-through";
-        }
-        localStorage.setItem("data", JSON.stringify(data));
+        tickedEle.style.textDecoration = "line-through";
       }
     }
 
@@ -48,11 +45,10 @@ const methods = () => {
       const element = e.target.closest(".todo--row");
       const taskId = element.getAttribute("task-no");
       const data = JSON.parse(localStorage.getItem("data"));
-      const task = data.find((task) => task.id === taskId);
       todos = todos.filter((todo) => todo.id !== taskId);
       localStorage.setItem("data", JSON.stringify(todos));
       if(todos.length === 0){
-        localStorage.clear()
+        localStorage.removeItem("data")
       }
       updateUI(todos);
     }
@@ -77,7 +73,7 @@ form.addEventListener("submit", (e) => {
     alert("No TODO");
   } else {
     const taskId = Math.trunc(Date.now() + Math.random()).toString();
-    const newTodo = { id: taskId, text: todoData.trim(), completed: false };
+    const newTodo = { id: taskId, text: todoData.trim(), completed: false  };
     todos.push(newTodo);
     localStorage.setItem("data", JSON.stringify(todos));
     updateUI(todos);

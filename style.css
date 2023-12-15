@@ -70,6 +70,14 @@ body{
     margin: 1rem 0;
     transition: all ease-in 0.2s;
 }
+.todo-text{
+    border: none;
+    outline: none;
+    font-size: 2rem;
+    font-weight: 600;
+    font-family: inherit;
+    appearance: none;
+}
 .active{
     opacity: 1;
     transition: all ease-in 0.2s;
@@ -83,4 +91,10 @@ body{
     background: none;
     font-size: 2rem;
     outline: none;
+}
+input:disabled {
+    cursor: default;
+    background-color:inherit;
+    color: black;
+    border : inherit;
 }

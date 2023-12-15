@@ -2,26 +2,23 @@ const form = document.querySelector(".form");
 const todoInput = document.querySelector(".todo--input");
 const container = document.querySelector(".todos--container");
 
-////////////////////////////
-
 let todos = [];
 
-/////UI UPDATION
 const updateUI = (todos) => {
-  container.innerHTML = " ";
-  todos.forEach((todo) => {
+  container.innerHTML = "";
+  todos.forEach((todo, i) => {
     const html = `
-    <p class="todo--data">${todo.text}</p>
-    <div class="button--box">
-    <button class="done buttons">✅</button>
-    <button class="delete buttons">❌</button>
-    <button class="edit buttons">📝</button>
-    </div>`;
+      <input type="text" name="data" class="todo-text" value="${todo.text}" disabled>
+      <div class="button--box">
+        <button class="done buttons">✅</button>
+        <button class="delete buttons">❌</button>
+        <button class="edit buttons">📝</button>
+      </div>`;
     const todoElement = document.createElement("div");
     todoElement.innerHTML = html;
     container.appendChild(todoElement);
-    todoElement.classList.add(`todo--row`, "active", `todo--row-${todo.id}`);
-    todoElement.setAttribute("data-taskNo", todo.id);
+    todoElement.classList.add(`todo--row`, "active");
+    todoElement.setAttribute("task-no", todo.id);
   });
   methods();
 };
@@ -29,29 +26,42 @@ const updateUI = (todos) => {
 const methods = () => {
   container.addEventListener("click", (e) => {
     e.preventDefault();
-    const taskId = e.target.closest(".todo--row").getAttribute("data-taskNo");
+
     if (e.target.classList.contains("done")) {
       const element = e.target.closest(".todo--row");
-      element.firstElementChild.style.textDecoration = "line-through";
+      const tickedEle = element.firstElementChild
+      const taskId = element.getAttribute("task-no");
+      const data = JSON.parse(localStorage.getItem("data"));
+      const task = data.find((task) => task.id === taskId);
+      console.log(task)
+      if (task) {
+        tickedEle.style.textDecoration = "line-through";
+        task.completed = true;
+        if(task.completed){
+          tickedEle.style.textDecoration = "line-through";
+        }
+        localStorage.setItem("data", JSON.stringify(data));
+      }
     }
+
     if (e.target.classList.contains("delete")) {
+      const element = e.target.closest(".todo--row");
+      const taskId = element.getAttribute("task-no");
+      const data = JSON.parse(localStorage.getItem("data"));
+      const task = data.find((task) => task.id === taskId);
       todos = todos.filter((todo) => todo.id !== taskId);
-      localStorage.setItem("data", todos)
+      localStorage.setItem("data", JSON.stringify(todos));
+      if(todos.length === 0){
+        localStorage.clear()
+      }
       updateUI(todos);
     }
     if (e.target.classList.contains("edit")) {
       console.log(e.target);
-      todoInput.focus();
-      let newValue = todoInput.value;
-      todos = todos.map((todo) =>
-        todo.id === taskId ? { ...todo, text: newValue } : todo
-      );
-      localStorage.setItem("data", JSON.stringify(todos));
     }
   });
 };
 
-///WHEN PAGE LOADS
 const intialLoad = () => {
   const storedData = localStorage.getItem("data");
   if (storedData) {
@@ -60,19 +70,18 @@ const intialLoad = () => {
   }
 };
 
-////ON FORM SUBMISSION
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const todoData = todoInput.value;
   if (!todoData) {
     alert("No TODO");
   } else {
-    const taskId = Date.now().toString(); // Generate a unique identifier
-    const newTodo = { id: taskId, text: todoData.trim(), completed : false};
+    const taskId = Math.trunc(Date.now() + Math.random()).toString();
+    const newTodo = { id: taskId, text: todoData.trim(), completed: false };
     todos.push(newTodo);
     localStorage.setItem("data", JSON.stringify(todos));
     updateUI(todos);
-    todoInput.value = " ";
+    todoInput.value = "";
   }
 });
 
